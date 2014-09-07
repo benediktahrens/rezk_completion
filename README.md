@@ -7,6 +7,13 @@ http://arxiv.org/abs/1303.0584
 It builds upon V. Voevodsky's Foundations library, available on
 http://arxiv.org/abs/1401.0053
 
+# Installation
+
+This library is part of the UniMath repository, available at https://github.com/UniMath/UniMath . 
+The recommended way to obtain this library is to install UniMath. Instructions for installing UniMath can be found on the UniMath web page.
+The below installation instructions should be considered as obsolete.
+
+
 ## Requirements
 
 ### Coq
