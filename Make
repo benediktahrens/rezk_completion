@@ -1,6 +1,6 @@
 -o Make.makefile
 -R . RezkCompletion
-auxiliary_lemmas_HoTT.v
+total2_paths.v
 category_hset.v
 equivalences.v
 functors_transformations.v

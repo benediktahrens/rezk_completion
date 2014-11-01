@@ -96,7 +96,7 @@ PP:=-pp "$(CAMLP4BIN)$(CAMLP4)o -I $(CAMLLIB) -I . $(COQSRCLIBS) $(CAMLP4EXTEND)
 #                                 #
 ###################################
 
-VFILES:=auxiliary_lemmas_HoTT.v\
+VFILES:=total2_paths.v\
   category_hset.v\
   equivalences.v\
   functors_transformations.v\

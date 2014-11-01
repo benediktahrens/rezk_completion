@@ -55,7 +55,7 @@ Require Import Foundations.hlevel2.hSet.
 Require Import RezkCompletion.pathnotations.
 Import RezkCompletion.pathnotations.PathNotations.
 
-Require Import RezkCompletion.auxiliary_lemmas_HoTT.
+Require Import RezkCompletion.total2_paths.
 
 Require Import RezkCompletion.precategories.
 
@@ -134,7 +134,7 @@ Proof.
             (fun x0 : ob C -> ob C' => 
             forall a b : ob C, a --> b -> x0 a --> x0 b) x)
             p (pr2 (pr1 F)) == pr2 (pr1 G)) _ 
-   (fiber_path (base_paths F G p)) _ (fiber_path (base_paths F G q))  H).
+   (fiber_paths (base_paths F G p)) _ (fiber_paths (base_paths F G q))  H).
    apply uip.
    change (isaset) with (isofhlevel 2).
    apply impred; intro a.
@@ -143,7 +143,7 @@ Proof.
    apply (pr2 (_ --> _)).
    apply (@total2_paths2 (pr1 F == pr1 G)  
     (fun x : pr1 F == pr1 G => transportf _ x (pr2 F) == pr2 G)
-          (base_paths F G p) (fiber_path p) (base_paths F G q) (fiber_path q) H').
+          (base_paths F G p) (fiber_paths p) (base_paths F G q) (fiber_paths q) H').
    apply uip.
    apply isasetaprop.
    apply isaprop_is_functor.
@@ -887,9 +887,9 @@ Proof.
   simpl; apply functor_eq_eq_from_functor_ob_eq.
   unfold functor_eq_from_functor_iso.
   unfold functor_eq.
-  rewrite base_total_path.
+  rewrite base_total2_paths.
   unfold pr1_functor_eq_from_functor_iso.
-  rewrite base_total_path.
+  rewrite base_total2_paths.
   unfold pr1_pr1_functor_eq_from_functor_iso.
   apply (equal_transport_along_weq _ _   (weqtoforallpaths _ _ _ )).
   simpl.
@@ -917,9 +917,9 @@ Proof.
       simpl in H2. apply H2. 
   unfold functor_eq_from_functor_iso.
   unfold functor_eq.
-  rewrite base_total_path.
+  rewrite base_total2_paths.
   unfold pr1_functor_eq_from_functor_iso.
-  rewrite base_total_path.
+  rewrite base_total2_paths.
   pathvia (pr1 (idtoiso
      (isotoid D H (functor_iso_pointwise_if_iso C D F G gamma (pr2 gamma) a)))).
   apply maponpaths.

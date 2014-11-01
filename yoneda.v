@@ -28,7 +28,7 @@ Require Import Foundations.hlevel2.hSet.
 Require Import RezkCompletion.pathnotations.
 Import RezkCompletion.pathnotations.PathNotations.
 
-Require Import RezkCompletion.auxiliary_lemmas_HoTT.
+Require Import RezkCompletion.total2_paths.
 
 Require Import RezkCompletion.precategories.
 Require Import RezkCompletion.category_hset.
