@@ -1,3 +1,24 @@
+(** **********************************************************
+
+Benedikt Ahrens, Chris Kapulkin, Mike Shulman
+
+january 2013
+
+
+************************************************************)
+
+
+(** **********************************************************
+
+Contents :  
+    - characterization of the path space of a sigma type
+      (reimplementation of lemmas found in HoTT library)
+    - a few other lemmas
+                	
+           
+************************************************************)
+
+
 Require Import Foundations.Generalities.uu0.
 Require Import Foundations.hlevel1.hProp.
 Require Import Foundations.hlevel2.hSet.
