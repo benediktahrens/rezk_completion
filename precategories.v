@@ -64,12 +64,11 @@ Local Notation "a --> b" := (precategory_morphisms a b)(at level 50).
     - composition
 *)
 
-Definition precategory_id_comp (C : precategory_ob_mor) :=
+Definition precategory_data := total2 (
+   fun C : precategory_ob_mor =>
      dirprod (forall c : C, c --> c) (* identities *) 
              (forall a b c : C,
-                 a --> b -> b --> c -> a --> c).
-
-Definition precategory_data := total2 precategory_id_comp.
+                 a --> b -> b --> c -> a --> c)).
 
 Definition precategory_data_pair (C : precategory_ob_mor)
     (id : forall c : C, c --> c)
@@ -108,31 +107,12 @@ Definition is_precategory (C : precategory_data) :=
                     (f : a --> b)(g : b --> c) (h : c --> d),
                      f ;; (g ;; h) == (f ;; g) ;; h).
 
-
-Lemma isaprop_is_precategory (C : precategory_data)
-  : isaprop (is_precategory C).
-Proof.
-  apply isofhleveltotal2.
-  { apply isofhleveltotal2. { repeat (apply impred; intro); apply setproperty. }
-    intros _. repeat (apply impred; intro); apply setproperty. }
-  intros _. repeat (apply impred; intro); apply setproperty. 
-Qed.
-
 Definition precategory := total2 is_precategory.
 
 Definition precategory_data_from_precategory (C : precategory) : 
        precategory_data := pr1 C.
 Coercion precategory_data_from_precategory : precategory >-> precategory_data.
 
-Lemma eq_precategory : forall C D : precategory, 
-    precategory_data_from_precategory C == precategory_data_from_precategory D -> C == D.
-Proof.
-  intros C D H.
-  apply total2_paths_hProp.
-  - apply isaprop_is_precategory.
-  - apply H.
-Defined.
-  
 Definition id_left (C : precategory) : 
    forall (a b : C) (f : a --> b),
            identity a ;; f == f := pr1 (pr1 (pr2 C)).
@@ -148,14 +128,14 @@ Definition assoc (C : precategory) :
 
 (** Any equality on objects a and b induces a morphism from a to b *)
 
-Definition idtomor {C : precategory_data}
+Definition precategory_eq_morphism (C : precategory_data)
    (a b : C) (H : a == b) : a --> b.
 Proof.
   destruct H.
   exact (identity a).
 Defined.
 
-Definition idtomor_inv {C : precategory}
+Definition precategory_eq_morphism_inv (C : precategory_data) 
     (a b : C) (H : a == b) : b --> a.
 Proof.
   destruct H.
@@ -184,11 +164,12 @@ Definition setcategory_objects_set (C : setcategory) : hSet :=
     hSetpair (ob C) (pr2 C).
 
 Lemma setcategory_eq_morphism_pi (C : setcategory) (a b : ob C)
-      (e e': a == b) : idtomor _ _ e == idtomor _ _ e'.
+      (H H': a == b) : precategory_eq_morphism C a b H == 
+                       precategory_eq_morphism C a b H'.
 Proof.
-  assert (h : e == e').
+  assert (h : H == H').
   apply uip. apply (pr2 C).
-  apply (maponpaths (idtomor _ _ ) h).
+  apply (maponpaths (precategory_eq_morphism C a b) h).
 Qed.
 
 (** * Isomorphisms in a precategory *)
@@ -238,6 +219,7 @@ Proof.
   simpl in *.
   apply pairofobuip.
 Qed.
+
 
 Definition iso {C : precategory} (a b :ob C) := total2
     (fun f : a --> b => is_isomorphism f).
@@ -297,9 +279,6 @@ Proof.
   apply is_iso_inv_from_iso.
 Defined.
 
-Definition iso_inv_from_is_iso {C : precategory} {a b : ob C}
-  (f : a --> b) (H : is_isomorphism f) : iso b a :=
-  iso_inv_from_iso (tpair _ f H).
 
 Definition iso_inv_after_iso (C : precategory) (a b : ob C)
    (f : iso a b) : f;; inv_from_iso f == identity _ :=
@@ -456,20 +435,6 @@ Proof.
   apply idpath.
 Qed.
 
-(** ***  *)
-
-Lemma iso_comp_right_isweq {C:precategory} {a b:ob C} (h:iso a b) (c:C) :
-  isweq (fun f : b --> c => h ;; f).
-Proof. 
-  intros. apply (gradth _ (fun g => inv_from_iso h ;; g)).
-       { intros f. refine (_ @ maponpaths (fun m => m ;; f) (pr2 (pr2 (pr2 h))) @ _).
-         { apply assoc. } { apply id_left. } }
-       { intros g. refine (_ @ maponpaths (fun m => m ;; g) (pr1 (pr2 (pr2 h))) @ _).
-         { apply assoc. } { apply id_left. } } 
-Qed.
-
-
-
 (** * Categories (aka saturated precategories) *)
 
 (** ** Definition of categories *)
@@ -485,12 +450,6 @@ Defined.
 (* use eta expanded version to force printing of object arguments *)
 Definition is_category (C : precategory) := forall (a b : ob C),
     isweq (fun p : a == b => idtoiso p).
-
-Lemma eq_idtoiso_idtomor {C:precategory} (a b:ob C) (e:a == b) :
-    pr1 (idtoiso e) == idtomor _ _ e.
-Proof. 
-  destruct e; reflexivity. 
-Defined.
 
 Lemma isaprop_is_category (C : precategory) : isaprop (is_category C).
 Proof.
@@ -737,23 +696,23 @@ Definition precategory_total_comp'' (C : precategory_data) :
         precategory_target C f == precategory_source C g ->
          total_morphisms C.
 Proof.
-  intros f g e.
+  intros f g H.
   destruct f as [[a b] f]. simpl in *.
   destruct g as [[b' c] g]. simpl in *.
-  unfold precategory_target in e; simpl in e.
-  unfold precategory_source in e; simpl in e. 
+  unfold precategory_target in H; simpl in H.
+  unfold precategory_source in H; simpl in H. 
   simpl.
   exists (dirprodpair a c). simpl.
-  exact ((f ;; idtomor _ _ e) ;; g).
+  exact ((f ;; precategory_eq_morphism C b b' H) ;; g).
 Defined.
 
 Definition precategory_total_comp (C : precategory_data) : 
       forall f g : total_morphisms C,
         precategory_target C f == precategory_source C g ->
          total_morphisms C := 
-  fun f g e => 
+  fun f g H => 
      tpair _ (dirprodpair (pr1 (pr1 f))(pr2 (pr1 g)))
-        ((pr2 f ;; idtomor _ _ e) ;; pr2 g).
+        ((pr2 f ;; precategory_eq_morphism _ _ _ H) ;; pr2 g).
 
 
 

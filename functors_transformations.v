@@ -100,10 +100,10 @@ Proof.
   apply (pr2 (_ --> _)).
 Qed.
 
-Definition functor (C C' : precategory) := total2 (
+Definition functor (C C' : precategory_data) := total2 (
    fun F : functor_data C C' => is_functor F).
 
-Lemma functor_eq (C C' : precategory) (F F': functor C C'):
+Lemma functor_eq (C C' : precategory_data) (F F': functor C C'):
     pr1 F == pr1 F' -> F == F'.
 Proof.
   intro H.
@@ -112,12 +112,12 @@ Proof.
   apply isaprop_is_functor.
 Defined.
 
-Definition functor_data_from_functor (C C': precategory)
+Definition functor_data_from_functor (C C': precategory_data)
      (F : functor C C') : functor_data C C' := pr1 F.
 Coercion functor_data_from_functor : functor >-> functor_data.
 
 
-Definition functor_eq_eq_from_functor_ob_eq (C C' : precategory)
+Definition functor_eq_eq_from_functor_ob_eq (C C' : precategory_data)
    (F G : functor C C') (p q : F == G) 
    (H : base_paths _ _ (base_paths _ _  p) == 
          base_paths _ _ (base_paths _ _ q)) :
@@ -152,10 +152,10 @@ Defined.
 
  
 
-Definition functor_id {C C' : precategory}(F : functor C C'):
+Definition functor_id (C C' : precategory_data)(F : functor C C'):
        forall a : ob C, #F (identity a) == identity (F a) := pr1 (pr2 F).
 
-Definition functor_comp {C C' : precategory}
+Definition functor_comp (C C' : precategory_data)
       (F : functor C C'):
        forall a b c : ob C, forall f : a --> b,
                  forall g : b --> c, 
@@ -423,9 +423,7 @@ Lemma isaprop_full_and_faithful (C D : precategory) (F : functor C D) :
    isaprop (full_and_faithful F).
 Proof.
   apply isofhleveldirprod.
-  apply impred; intro.
-  apply impred; intro.
-  apply impred; intro.
+  repeat (apply impred; intro).
   simpl. repeat (apply impred; intro).
   apply isapropishinh.
   apply isaprop_faithful.
@@ -542,13 +540,13 @@ Proof.
   apply isaprop_is_nat_trans.
 Qed.
 
-Definition nat_trans_data {C C' : precategory_data}
- {F F' : functor_data C C'}(a : nat_trans F F') :
+Definition nat_trans_data (C C' : precategory_data)
+ (F F' : functor_data C C')(a : nat_trans F F') :
    forall x : ob C, F x --> F' x := pr1 a.
 Coercion nat_trans_data : nat_trans >-> Funclass.
 
 Definition nat_trans_ax {C C' : precategory_data}
-  {F F' : functor_data C C'} (a : nat_trans F F') :
+  (F F' : functor_data C C') (a : nat_trans F F') :
   forall (x x' : ob C)(f : x --> x'),
     #F f ;; a x' == a x ;; #F' f := pr2 a.
 
@@ -580,7 +578,7 @@ Qed.
 
 (** ** Functor category [[C, D]] *)
 
-Definition functor_precategory_ob_mor (C C' : precategory): 
+Definition functor_precategory_ob_mor (C C' : precategory_data): 
   precategory_ob_mor := precategory_ob_mor_pair 
    (functor C C') (fun F F' : functor C C' =>
                               hSetpair (nat_trans F F') 
@@ -802,11 +800,11 @@ Lemma toforallpaths_funextsec : forall (T : UU) (P : T -> UU) (f g : forall t : 
             toforallpaths _  _ _ (funextsec _ _ _ h) == h.
 Proof.
   intros T P f g h.
-  Opaque weqtoforallpaths. 
-  exact ((homotweqinvweq (weqtoforallpaths _ f g)) h : (pr1weq _ _ (tpair _ _ _) _) == _).
+  set (H':= homotweqinvweq (weqtoforallpaths _ f g)).
+  simpl in H'.
+  apply H'.
 Qed.
 
-Transparent weqtoforallpaths.
 
 Definition pr1_functor_eq_from_functor_iso (C D : precategory)
     (H : is_category D) (F G : ob [C , D]) :
@@ -843,7 +841,7 @@ Proof.
        (A a ;; #G f)).
   rewrite <- assoc.
   apply maponpaths.
-  apply (nat_trans_ax A).
+  apply (nat_trans_ax _ _ A).
   rewrite assoc.
 
   unfold functor_iso_pointwise_if_iso.

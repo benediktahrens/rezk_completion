@@ -87,7 +87,7 @@ Proof.
   simpl in *.
   intros;
   repeat rewrite <- functor_comp.
-  rewrite (nat_trans_ax gamma).
+  rewrite (nat_trans_ax _ _ gamma).
   apply idpath.
 Qed.
 
