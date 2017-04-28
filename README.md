@@ -7,6 +7,8 @@ http://arxiv.org/abs/1303.0584
 It builds upon V. Voevodsky's Foundations library, available on
 http://arxiv.org/abs/1401.0053
 
+**Attention:** This repository does not receive any updates. Its contents have been fully integrated into https://github.com/UniMath/UniMath.
+
 # Installation
 
 This library is part of the UniMath repository, available at https://github.com/UniMath/UniMath . 
